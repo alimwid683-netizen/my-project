@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الوكيل الذكي للمؤسسة المالية الكبرى | Sovereign Financial AI Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- Top Live Market Ticker -->
+  <div class="w-full bg-slate-950/90 border-b border-white/10 py-1.5 overflow-hidden no-print text-xs">
+    <div class="ticker-track items-center gap-8 px-4" id="market-ticker">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- Main Navigation / Executive Header -->
+  <header class="sticky top-0 z-30 glass-panel border-b border-white/10 px-4 lg:px-8 py-3.5 no-print">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3.5">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/20 border border-amber-300/40">
+          <i class="fa-solid fa-building-columns text-slate-950 text-xl"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 id="institution-name" class="text-lg md:text-xl font-extrabold tracking-tight text-white">المؤسسة المالية الكبرى</h1>
+            <button onclick="openBrandModal()" title="تعديل اسم المؤسسة" class="text-slate-400 hover:text-amber-400 transition text-xs bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-md border border-white/10">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-beacon"></span>
+              <span data-i18n="agent_online">الوكيل السيادي نشط</span>
+            </span>
+          </div>
+          <p class="text-xs text-slate-400" data-i18n="institution_subtitle">منظومة الوكيل الذكي لإدارة الأصول، المخاطر، والعمليات المؤسسية الكبرى</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex items-center gap-1.5 bg-slate-900/80 p-1 rounded-xl border border-white/10 overflow-x-auto max-w-full">
+        <button onclick="switchTab('command')" id="tab-btn-command" class="tab-btn active px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-amber-500 text-slate-950 shadow">
+          <i class="fa-solid fa-microchip"></i>
+          <span data-i18n="tab_command">مركز قيادة الوكيل</span>
+        </button>
+        <button onclick="switchTab('swarm')" id="tab-btn-swarm" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 text-slate-300 hover:text-white hover:bg-white/5">
+          <i class="fa-solid fa-network-wired"></i>
+          <span data-i18n="tab_swarm">شبكة الوكلاء (4)</span>
+        </button>
+        <button onclick="switchTab('simulator')" id="tab-btn-simulator" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 text-slate-300 hover:text-white hover:bg-white/5">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span data-i18n="tab_simulator">المحفظة والمحاكاة</span>
+        </button>
+        <button onclick="switchTab('approvals')" id="tab-btn-approvals" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 text-slate-300 hover:text-white hover:bg-white/5">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span data-i18n="tab_approvals">الموافقات التنفيذية</span>
+          <span id="pending-badge" class="px-1.5 py-0.2 rounded-full text-[10px] bg-rose-500 text-white font-extrabold">3</span>
+        </button>
+      </nav>
+
+      <!-- Quick Utility Actions -->
+      <div class="flex items-center gap-2">
+        <button onclick="runAutonomousCycle()" class="px-3 py-2 rounded-xl text-xs font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-bolt"></i>
+          <span data-i18n="btn_auto_scan">فحص ذكي فوري</span>
+        </button>
+        <button onclick="window.print()" class="p-2 rounded-xl text-xs bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition" title="طباعة تقرير مجلس الإدارة">
+          <i class="fa-solid fa-print"></i>
+        </button>
+        <button onclick="toggleLanguage()" id="lang-btn" class="px-3 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-amber-400 border border-amber-500/30 transition">
+          EN
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
+
+    <!-- Executive KPI Row -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- KPI 1 -->
+      <div class="glass-panel-gold rounded-2xl p-4 relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-400 font-semibold" data-i18n="kpi_aum_title">إجمالي الأصول المدارة (AUM)</span>
+          <span class="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
+            <i class="fa-solid fa-vault"></i>
+          </span>
+        </div>
+        <div class="mt-2 flex items-baseline gap-2">
+          <span class="text-2xl font-black text-white tracking-tight" id="kpi-aum">$142.85B</span>
+          <span class="text-xs font-bold text-emerald-400 flex items-center gap-0.5">
+            <i class="fa-solid fa-arrow-trend-up"></i> +4.8%
+          </span>
+        </div>
+        <p class="mt-1 text-[11px] text-slate-400" data-i18n="kpi_aum_sub">موزعة على 14 صندوقاً سيادياً واستثمارياً</p>
+      </div>
+
+      <!-- KPI 2 -->
+      <div class="glass-panel-emerald rounded-2xl p-4 relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-400 font-semibold" data-i18n="kpi_alpha_title">العائد الذكي للوكيل (AI Alpha)</span>
+          <span class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+            <i class="fa-solid fa-chart-line"></i>
+          </span>
+        </div>
+        <div class="mt-2 flex items-baseline gap-2">
+          <span class="text-2xl font-black text-white tracking-tight" id="kpi-alpha">+18.64%</span>
+          <span class="text-xs font-bold text-emerald-400">+310 bps</span>
+        </div>
+        <p class="mt-1 text-[11px] text-slate-400" data-i18n="kpi_alpha_sub">يتفوق على المؤشر القياسي العالمي</p>
+      </div>
+
+      <!-- KPI 3 -->
+      <div class="glass-panel rounded-2xl p-4 relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-400 font-semibold" data-i18n="kpi_liquidity_title">السيولة الفورية والخزانة</span>
+          <span class="w-8 h-8 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+            <i class="fa-solid fa-coins"></i>
+          </span>
+        </div>
+        <div class="mt-2 flex items-baseline gap-2">
+          <span class="text-2xl font-black text-white tracking-tight" id="kpi-liquidity">$28.40B</span>
+          <span class="text-xs font-bold text-cyan-400">LCR 184%</span>
+        </div>
+        <p class="mt-1 text-[11px] text-slate-400" data-i18n="kpi_liquidity_sub">جاهزة لاقتناص الفرص والصفقات الكبرى</p>
+      </div>
+
+      <!-- KPI 4 -->
+      <div class="glass-panel rounded-2xl p-4 relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-400 font-semibold" data-i18n="kpi_risk_title">درجة الأمان والامتثال (Basel III)</span>
+          <span class="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-400">
+            <i class="fa-solid fa-shield-check"></i>
+          </span>
+        </div>
+        <div class="mt-2 flex items-baseline gap-2">
+          <span class="text-2xl font-black text-white tracking-tight" id="kpi-risk">99.4%</span>
+          <span class="text-xs font-bold text-amber-400">AAA</span>
+        </div>
+        <p class="mt-1 text-[11px] text-slate-400" data-i18n="kpi_risk_sub">مراقبة لحظية ضد الاحتيال ومخاطر السوق</p>
+      </div>
+    </section>
+
+    <!-- TAB 1: AI AGENT COMMAND CENTER -->
+    <section id="view-command" class="tab-view grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Left/Main Column: Interactive Sovereign AI Agent Console (8 cols) -->
+      <div class="lg:col-span-8 glass-panel rounded-2xl flex flex-col h-[620px] overflow-hidden border border-amber-500/20">
+        <!-- Console Header -->
+        <div class="px-5 py-3.5 bg-slate-900/90 border-b border-white/10 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-emerald-500 p-0.5">
+                <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                  <i class="fa-solid fa-robot text-amber-400"></i>
+                </div>
+              </div>
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 absolute -bottom-0.5 -left-0.5 border-2 border-slate-950"></span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-sm font-extrabold text-white" data-i18n="console_title">المستشار والوكيل التنفيذي الأول (Core Financial AI)</h2>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">QUANT-LLM v4.8</span>
+              </div>
+              <p class="text-[11px] text-slate-400" data-i18n="console_subtitle">متصل بقواعد بيانات الخزانة، البورصات العالمية، ومحرك المخاطر</p>
+            </div>
+          </div>
+
+          <!-- Mode Selector -->
+          <div class="flex items-center gap-2">
+            <select id="agent-mode" onchange="updateAgentMode()" class="bg-slate-950 text-xs text-slate-200 border border-white/15 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-amber-400">
+              <option value="executive">الوضع: تنفيذي شامل</option>
+              <option value="quant">الوضع: تحليل كمي واستثماري</option>
+              <option value="risk">الوضع: رقابة ومخاطر وائتمان</option>
+              <option value="ma">الوضع: صفقات واستحواذ (M&A)</option>
+            </select>
+            <button onclick="clearChat()" title="مسح السجل" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 text-xs">
+              <i class="fa-solid fa-rotate-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Scenario Prompts Bar -->
+        <div class="px-4 py-2.5 bg-slate-950/60 border-b border-white/5 flex items-center gap-2 overflow-x-auto no-print">
+          <span class="text-[11px] text-amber-400 font-bold shrink-0"><i class="fa-solid fa-wand-magic-sparkles ml-1"></i>أوامر سريعة:</span>
+          <button onclick="sendQuickPrompt('portfolio')" class="shrink-0 text-[11px] px-3 py-1 rounded-full bg-white/5 hover:bg-amber-500/20 text-slate-300 hover:text-amber-300 border border-white/10 transition">
+            📊 تحليل المحفظة وتوزيع الأصول
+          </button>
+          <button onclick="sendQuickPrompt('acquisition')" class="shrink-0 text-[11px] px-3 py-1 rounded-full bg-white/5 hover:bg-amber-500/20 text-slate-300 hover:text-amber-300 border border-white/10 transition">
+            🏦 تقييم صفقة استحواذ بـ 450M$
+          </button>
+          <button onclick="sendQuickPrompt('risk')" class="shrink-0 text-[11px] px-3 py-1 rounded-full bg-white/5 hover:bg-amber-500/20 text-slate-300 hover:text-amber-300 border border-white/10 transition">
+            🛡️ فحص المخاطر والسيولة (Stress Test)
+          </button>
+          <button onclick="sendQuickPrompt('gold')" class="shrink-0 text-[11px] px-3 py-1 rounded-full bg-white/5 hover:bg-amber-500/20 text-slate-300 hover:text-amber-300 border border-white/10 transition">
+            🪙 استراتيجية الذهب والسندات السيادية
+          </button>
+        </div>
+
+        <!-- Chat Messages Stream -->
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-5 space-y-4">
+          <!-- Populated dynamically by app.js -->
+        </div>
+
+        <!-- AI Thinking Indicator (Hidden by default) -->
+        <div id="ai-thinking" class="hidden px-5 py-2.5 bg-slate-900/90 border-t border-white/5 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="thinking-wave flex items-center">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <span id="thinking-status-text" class="text-xs text-amber-300 font-semibold">يقوم الوكيل الذكي بتحليل بيانات الخزانة ومؤشرات المخاطر...</span>
+          </div>
+          <span class="text-[10px] font-mono text-slate-400">LATENCY: 42ms</span>
+        </div>
+
+        <!-- Input Bar -->
+        <form onsubmit="handleChatSubmit(event)" class="p-3.5 bg-slate-900/95 border-t border-white/10 flex items-center gap-2.5 no-print">
+          <button type="button" onclick="toggleVoiceInput()" id="voice-btn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-slate-300 hover:text-amber-400 transition shrink-0" title="أمر صوتي تنفيذي">
+            <i class="fa-solid fa-microphone"></i>
+          </button>
+          <input
+            type="text"
+            id="chat-input"
+            placeholder="اطلب من الوكيل المالي تحليل صفقة، إعادة توازن المحفظة، أو إصدار تقرير ائتماني..."
+            class="flex-1 bg-slate-950/90 text-sm text-white placeholder-slate-500 px-4 py-2.5 rounded-xl border border-white/10 focus:outline-none focus:border-amber-500"
+          />
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs transition flex items-center gap-2 shrink-0 shadow-lg shadow-amber-500/20">
+            <span data-i18n="btn_send">تنفيذ الأمر</span>
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- Right Column: Live Agent Telemetry & Decision Radar (4 cols) -->
+      <div class="lg:col-span-4 flex flex-col gap-6">
+        <!-- Active Autonomous Operations Card -->
+        <div class="glass-panel rounded-2xl p-5 border border-white/10">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-extrabold text-white flex items-center gap-2">
+              <i class="fa-solid fa-satellite-dish text-amber-400"></i>
+              <span data-i18n="live_ops_title">العمليات الحية للوكيل</span>
+            </h3>
+            <span class="text-[11px] text-emerald-400 font-mono">LIVE STREAM</span>
+          </div>
+
+          <div id="live-telemetry-feed" class="space-y-3 max-h-[250px] overflow-y-auto pr-1">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Quick Portfolio Allocation Snapshot -->
+        <div class="glass-panel rounded-2xl p-5 border border-white/10 flex-1 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-extrabold text-white flex items-center gap-2">
+                <i class="fa-solid fa-layer-group text-emerald-400"></i>
+                <span data-i18n="allocation_snapshot_title">توزيع الأصول السيادية</span>
+              </h3>
+              <button onclick="switchTab('simulator')" class="text-[11px] text-amber-400 hover:underline">محاكاة التعديل ←</button>
+            </div>
+
+            <div class="space-y-3 mt-4" id="allocation-bars">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-white/10 flex items-center justify-between">
+            <div>
+              <span class="text-[11px] text-slate-400 block">توصية الوكيل الحالية:</span>
+              <span class="text-xs font-bold text-emerald-400">زيادة التحوط في الذهب والسندات الخضراء (+2.5%)</span>
+            </div>
+            <button onclick="applyAgentRebalance()" class="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 text-xs font-bold transition">
+              تطبيق فوري
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: MULTI-AGENT SWARM (شبكة الوكلاء المتخصصين) -->
+    <section id="view-swarm" class="tab-view hidden space-y-6">
+      <div class="glass-panel rounded-2xl p-6 border border-white/10">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-lg font-extrabold text-white flex items-center gap-2">
+              <i class="fa-solid fa-network-wired text-amber-400"></i>
+              <span>منظومة الوكلاء المتخصصين في المؤسسة المالية</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">يعمل الوكيل المركزي على تنسيق 4 وكلاء فرعيين متخصصين لإدارة كافة قطاعات المؤسسة المالية الكبرى</p>
+          </div>
+          <button onclick="deployNewSubAgentModal()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs transition flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i>
+            <span>إضافة وكيل مالي متخصص</span>
+          </button>
+        </div>
+
+        <div id="swarm-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: PORTFOLIO & STRESS-TEST SIMULATOR (المحفظة والمحاكاة المالية) -->
+    <section id="view-simulator" class="tab-view hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Simulator Controls (5 cols) -->
+      <div class="lg:col-span-5 glass-panel rounded-2xl p-6 border border-white/10 space-y-5">
+        <div class="border-b border-white/10 pb-3">
+          <h2 class="text-base font-extrabold text-white flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-amber-400"></i>
+            <span>محاكي القرارات الاستثمارية واختبار الضغط</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">اضبط المعايير ليقوم الوكيل الذكي بحساب العائد المتوقع ومخاطر المحفظة فوراً</p>
+        </div>
+
+        <div class="space-y-4">
+          <!-- Capital Input -->
+          <div>
+            <div class="flex justify-between text-xs mb-1.5">
+              <span class="text-slate-300 font-semibold">حجم المحفظة / الضخ الاستثماري الجديد:</span>
+              <span id="sim-capital-val" class="text-amber-400 font-extrabold font-mono">$500M</span>
+            </div>
+            <input type="range" id="sim-capital" min="50" max="5000" step="50" value="500" oninput="updateSimulation()" class="w-full accent-amber-500 cursor-pointer" />
+            <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+              <span>$50M</span>
+              <span>$2.5B</span>
+              <span>$5.0B</span>
+            </div>
+          </div>
+
+          <!-- Risk Appetite -->
+          <div>
+            <div class="flex justify-between text-xs mb-1.5">
+              <span class="text-slate-300 font-semibold">مستوى التحوط والمخاطرة المؤسسية:</span>
+              <span id="sim-risk-val" class="text-emerald-400 font-extrabold">متوازن سيادي (Moderate)</span>
+            </div>
+            <input type="range" id="sim-risk" min="1" max="5" step="1" value="3" oninput="updateSimulation()" class="w-full accent-emerald-500 cursor-pointer" />
+            <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+              <span>متحفظ جداً</span>
+              <span>متوازن</span>
+              <span>نمو جريء</span>
+            </div>
+          </div>
+
+          <!-- Horizon -->
+          <div>
+            <div class="flex justify-between text-xs mb-1.5">
+              <span class="text-slate-300 font-semibold">الأفق الزمني للاستثمار:</span>
+              <span id="sim-years-val" class="text-cyan-400 font-extrabold">5 سنوات</span>
+            </div>
+            <input type="range" id="sim-years" min="1" max="15" step="1" value="5" oninput="updateSimulation()" class="w-full accent-cyan-500 cursor-pointer" />
+          </div>
+
+          <!-- Macro Stress Scenario -->
+          <div>
+            <label class="block text-xs text-slate-300 font-semibold mb-1.5">سيناريو الاقتصاد الكلي (Stress Scenario):</label>
+            <select id="sim-scenario" onchange="updateSimulation()" class="w-full bg-slate-950 text-xs text-white border border-white/15 rounded-xl px-3 py-2.5 focus:outline-none focus:border-amber-400">
+              <option value="baseline">النمو الطبيعي للأسواق العالمية (Baseline)</option>
+              <option value="rate_cut">خفض الفائدة الفيدرالية وتوسع السيولة (+Bull)</option>
+              <option value="inflation">تضخم مرتفع وارتفاع أسعار الطاقة والذهب</option>
+              <option value="crisis">أزمة سيولة عالمية وتصحيح حاد (-Stress Test)</option>
+            </select>
+          </div>
+        </div>
+
+        <button onclick="sendSimToAgent()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>اعتماد السيناريو وإرساله للوكيل للتنفيذ</span>
+        </button>
+      </div>
+
+      <!-- Simulator Results & Projection (7 cols) -->
+      <div class="lg:col-span-7 glass-panel rounded-2xl p-6 border border-white/10 flex flex-col justify-between space-y-6">
+        <div>
+          <div class="flex items-center justify-between border-b border-white/10 pb-3">
+            <div>
+              <h3 class="text-base font-extrabold text-white">نتائج المحاكاة الكمية للوكيل (AI Quant Projection)</h3>
+              <p class="text-xs text-slate-400">تقديرات مبنية على 10,000 مسار مونت كارلو (Monte Carlo Simulation)</p>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-mono font-bold" id="sim-sharpe">Sharpe: 2.14</span>
+          </div>
+
+          <!-- 3 Output Metrics -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5">
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-white/10">
+              <span class="text-[11px] text-slate-400 block">القيمة المتوقعة بنهاية المدة</span>
+              <span id="sim-total-return" class="text-xl font-black text-amber-400 mt-1 block">$912.4M</span>
+              <span id="sim-cagr" class="text-[11px] text-emerald-400 font-bold">عائد سنوي مركب: 12.8%</span>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-white/10">
+              <span class="text-[11px] text-slate-400 block">صافي الربح التراكمي المتوقع</span>
+              <span id="sim-net-profit" class="text-xl font-black text-emerald-400 mt-1 block">+$412.4M</span>
+              <span class="text-[11px] text-slate-400">بعد خصم تكاليف التحوط</span>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-white/10">
+              <span class="text-[11px] text-slate-400 block">القيمة المعرضة للمخاطر (VaR 99%)</span>
+              <span id="sim-var" class="text-xl font-black text-rose-400 mt-1 block">-4.2%</span>
+              <span class="text-[11px] text-slate-400">ضمن الحدود السيادية الآمنة</span>
+            </div>
+          </div>
+
+          <!-- Visual Bar Projection by Year -->
+          <div class="mt-6">
+            <h4 class="text-xs font-bold text-slate-300 mb-3">منحنى نمو المحفظة التراكمي (مليون دولار):</h4>
+            <div id="sim-chart-bars" class="h-44 flex items-end gap-3 pt-6 px-2 border-b border-white/10">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Recommendation Box -->
+        <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
+          <i class="fa-solid fa-lightbulb text-amber-400 text-lg mt-0.5"></i>
+          <div>
+            <h4 class="text-xs font-extrabold text-amber-300">توصية الوكيل الذكي لهذا السيناريو:</h4>
+            <p id="sim-ai-advice" class="text-xs text-slate-300 mt-1 leading-relaxed">
+              يوصي الوكيل بتخصيص 35% في الصكوك والسندات السيادية، 30% في الأسهم القيادية والتقنية، 20% في الائتمان الخاص والتمويل المؤسسي، و15% في الذهب والسلع الاستراتيجية.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: EXECUTIVE APPROVALS & SMART LEDGER (الموافقات التنفيذية) -->
+    <section id="view-approvals" class="tab-view hidden space-y-6">
+      <div class="glass-panel rounded-2xl p-6 border border-white/10">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-lg font-extrabold text-white flex items-center gap-2">
+              <i class="fa-solid fa-file-signature text-amber-400"></i>
+              <span>سجل القرارات والموافقات التنفيذية للوكيل</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">العمليات المالية الكبرى التي أعدها الوكيل الذكي وبانتظار التوقيع الرقمي لرئيس المؤسسة</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="approveAllTransactions()" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs transition flex items-center gap-1.5">
+              <i class="fa-solid fa-check-double"></i>
+              <span>اعتماد كافة العمليات المعلقة</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="approvals-list" class="space-y-4">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Customize Institution Name Modal -->
+  <div id="brand-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="glass-panel rounded-2xl max-w-md w-full p-6 border border-amber-500/30 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-extrabold text-white">تخصيص هوية المؤسسة المالية</h3>
+        <button onclick="closeBrandModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">اسم المؤسسة المالية الكبرى:</label>
+          <input type="text" id="brand-name-input" value="المؤسسة المالية الكبرى" class="w-full bg-slate-950 text-sm text-white px-3.5 py-2 rounded-xl border border-white/15 focus:outline-none focus:border-amber-400" />
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">اسم الوكيل الذكي الخاص بك:</label>
+          <input type="text" id="agent-name-input" value="الوكيل السيادي الذكي (Sovereign AI)" class="w-full bg-slate-950 text-sm text-white px-3.5 py-2 rounded-xl border border-white/15 focus:outline-none focus:border-amber-400" />
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeBrandModal()" class="px-4 py-2 rounded-xl text-xs bg-white/5 text-slate-300">إلغاء</button>
+        <button onclick="saveBrandSettings()" class="px-5 py-2 rounded-xl text-xs font-extrabold bg-amber-500 text-slate-950">حفظ الهوية</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast-container" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
