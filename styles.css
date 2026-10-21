@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap');
+
+:root {
+  --bg-primary: #070b14;
+  --bg-card: rgba(13, 22, 41, 0.82);
+  --bg-card-hover: rgba(20, 32, 60, 0.9);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-gold: rgba(217, 119, 6, 0.3);
+  --accent-gold: #f59e0b;
+  --accent-gold-dark: #b45309;
+  --accent-emerald: #10b981;
+  --accent-cyan: #06b6d4;
+  --accent-sapphire: #3b82f6;
+  --accent-rose: #f43f5e;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+}
+
+body {
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  background-image: 
+    radial-gradient(at 15% 15%, rgba(16, 185, 129, 0.06) 0px, transparent 55%),
+    radial-gradient(at 85% 20%, rgba(245, 158, 11, 0.05) 0px, transparent 50%),
+    radial-gradient(at 50% 85%, rgba(59, 130, 246, 0.05) 0px, transparent 60%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* English font override when dir="ltr" */
+[dir="ltr"] body, [dir="ltr"] .font-latin {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Glassmorphism custom classes */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+}
+
+.glass-panel-gold {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.07) 0%, rgba(13, 22, 41, 0.85) 100%);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-gold);
+}
+
+.glass-panel-emerald {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(13, 22, 41, 0.85) 100%);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(10, 16, 29, 0.6);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 158, 11, 0.4);
+}
+
+/* Ticker marquee animation */
+@keyframes ticker {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+[dir="rtl"] .ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker-rtl 40s linear infinite;
+}
+
+[dir="ltr"] .ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker-ltr 40s linear infinite;
+}
+
+@keyframes ticker-rtl {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(50%, 0, 0); }
+}
+
+@keyframes ticker-ltr {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+/* Pulse beacon */
+.pulse-beacon {
+  position: relative;
+}
+.pulse-beacon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: inherit;
+  animation: beacon-pulse 2s infinite ease-out;
+  z-index: 0;
+}
+@keyframes beacon-pulse {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+}
+
+/* AI thinking wave animation */
+.thinking-wave span {
+  display: inline-block;
+  width: 5px;
+  height: 16px;
+  margin: 0 2px;
+  background-color: var(--accent-gold);
+  border-radius: 3px;
+  animation: wave 1.2s infinite ease-in-out;
+}
+.thinking-wave span:nth-child(2) { animation-delay: 0.15s; background-color: var(--accent-emerald); }
+.thinking-wave span:nth-child(3) { animation-delay: 0.3s; background-color: var(--accent-cyan); }
+.thinking-wave span:nth-child(4) { animation-delay: 0.45s; background-color: var(--accent-sapphire); }
+
+@keyframes wave {
+  0%, 100% { height: 6px; }
+  50% { height: 22px; }
+}
+
+/* Audio visualizer bars */
+.audio-bar {
+  width: 3px;
+  background: linear-gradient(to top, #10b981, #f59e0b);
+  border-radius: 2px;
+  animation: equalize 1s infinite alternate ease-in-out;
+}
+@keyframes equalize {
+  0% { height: 4px; }
+  50% { height: 18px; }
+  100% { height: 9px; }
+}
+
+/* Print layout for executive board report */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .glass-panel, .glass-panel-gold, .glass-panel-emerald {
+    background: #ffffff !important;
+    border: 1px solid #cccccc !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+}
