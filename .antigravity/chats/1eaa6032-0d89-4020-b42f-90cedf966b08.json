@@ -4,5 +4,18 @@
   "createdAt": "2026-10-21T06:39:20.110Z",
   "filename": "1eaa6032-0d89-4020-b42f-90cedf966b08.json",
   "geminiStarted": false,
-  "messages": []
+  "messages": [
+    {
+      "id": "e73fe0ad-dc17-4420-a264-07b1f1b568de",
+      "role": "user",
+      "content": "بدي تعملي تطبيق لا agent الموسسة المالية الكبرى يلي عم اعملها",
+      "status": "pending",
+      "model": "gemini-3.8-flash-high",
+      "client_type": "gemini-bridge",
+      "parent_message_id": null,
+      "created_at": "2026-10-21T06:43:37.401Z",
+      "sender": "ios",
+      "is_cancelled": false
+    }
+  ]
 }
